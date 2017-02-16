@@ -6,10 +6,8 @@ using namespace std;
 class LSB
 {
 public:
-	static bool LSB::encode(char* inputFileName, char* outputFileName)
+	static bool LSB::encode(Bitmap bitmap, char* outputFileName)
 	{
-		Bitmap bitmap;
-		bitmap.readFile(inputFileName);
 		ofstream ofs(outputFileName, ios::binary);
 
 		if (!ofs.is_open()) return false;
