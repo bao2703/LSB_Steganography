@@ -16,7 +16,7 @@ public:
 	{
 		ifstream ifs(fileName, ios::binary);
 
-		if (ifs.fail())
+		if (!ifs.is_open())
 		{
 			return false;
 		}
@@ -31,6 +31,7 @@ public:
 			signature[i] = ifs.get();
 		}
 
+		data = "";
 		int c;
 		while ((c = ifs.get()) != EOF)
 		{

@@ -19,7 +19,7 @@ public:
 	static int binaryToInteger(string str)
 	{
 		int n = 0;
-		for (int i = 0; i < INT4_BIT - 1 && str[i]; i++)
+		for (int i = 0; i < INT4_BIT && str[i]; i++)
 		{
 			n *= 2;
 			if (str[i] == '1')

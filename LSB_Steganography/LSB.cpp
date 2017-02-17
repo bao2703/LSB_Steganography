@@ -9,10 +9,9 @@ class LSB
 public:
 	static bool LSB::encrypt(Bitmap bitmap, char* inputFileName, char* outputFileName)
 	{
-		
 		ofstream ofs(outputFileName, ios::binary);
 
-		if (ofs.fail()) 
+		if (!ofs.is_open())
 		{
 			return false;
 		}
@@ -22,16 +21,16 @@ public:
 			ofs << char(bitmap.header[i]);
 		}
 
-		for (int i = 0; i < SIGNATURE_SIZE; ++i)
+		for (int i = 0; i < SIGNATURE_SIZE; i++)
 		{
 			ofs << char(bitmap.signature[i]);
 		}
 
-		string bits = readMessage(inputFileName);
+		string message = readMessage(inputFileName);
+		string bits = Helper::integerToBinary(message.length(), INT4_BIT);
+		bits += convertToBits(message);
 
-		bits = Helper::integerToBinary(bits.length(), INT4_BIT) + bits;
-
-		for (int i = 0; i < bitmap.data.length(); ++i)
+		for (int i = 0; i < bitmap.data.length(); i++)
 		{
 			if (i < bits.length())
 			{
@@ -57,26 +56,74 @@ public:
 
 		return true;
 	}
-	static bool decode(char* fileName);
+	static bool decrypt(Bitmap bitmap, char* outputFileName)
+	{
+		ofstream ofs(outputFileName, ios::binary);
+
+		if (!ofs.is_open())
+		{
+			return false;
+		}
+
+		for (int i = 0; i < HEADER_SIZE; i++)
+		{
+			ofs << char(bitmap.header[i]);
+		}
+
+		for (int i = 0; i < SIGNATURE_SIZE; i++)
+		{
+			ofs << char(bitmap.signature[i]);
+		}
+
+		string bits;
+		for (int i = 0; i < INT4_BIT; i++)
+		{
+			bits += Helper::integerToBinary(bitmap.data[i], CHAR_BIT)[CHAR_BIT - 1];
+		}
+		int messageLenght = Helper::binaryToInteger(bits);
+
+		bits = "";
+		string message;
+		for (int i = INT4_BIT; i < messageLenght * CHAR_BIT + INT4_BIT;)
+		{
+			for (int j = 0; j < CHAR_BIT; j++)
+			{
+				bits += Helper::integerToBinary(bitmap.data[i++], CHAR_BIT)[CHAR_BIT - 1];
+			}
+			message += Helper::binaryToInteger(bits);
+			bits = "";
+		}
+
+		ofs.close();
+		return true;
+	};
 private:
 	static string readMessage(char* fileName)
 	{
 		ifstream ifs(fileName);
 
-		if (ifs.fail())
+		if (!ifs.is_open())
 		{
-			throw exception();
+			return "";
 		}
 
-		string str;
+		string result;
 		int c;
 		while ((c = ifs.get()) != EOF)
 		{			
-			str += Helper::integerToBinary(c, CHAR_BIT);
+			result += c;
 		}
 
 		ifs.close();
-		return str;
+		return result;
+	}
+	static string convertToBits(string str)
+	{
+		string result;
+		for (int i = 0; i < str.length(); i++)
+		{
+			result += Helper::integerToBinary(str[i], CHAR_BIT);
+		}
+		return result;
 	}
 };
-
