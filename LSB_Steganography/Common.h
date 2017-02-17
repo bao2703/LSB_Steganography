@@ -3,3 +3,4 @@
 #define SIGNATURE_SIZE 8
 #define FILE_NAME_LENGHT 8
 #define FILE_EXTENSION_LENGHT 3
+#define INT4_BIT 32

@@ -16,7 +16,7 @@ public:
 	{
 		ifstream ifs(fileName, ios::binary);
 
-		if (!ifs.is_open())
+		if (ifs.fail())
 		{
 			return false;
 		}
