@@ -1,6 +1,6 @@
 #include <fstream>
 #include "Common.h"
-
+#include "Helper.cpp"
 using namespace std;
 
 class Bitmap
@@ -12,7 +12,7 @@ public:
 	//int messageExtension[FILE_EXTENSION_LENGHT * 8];
 	//int messageLenght[32];
 	string data;
-	bool readFile(char* fileName)
+	bool readFile(string fileName)
 	{
 		ifstream ifs(fileName, ios::binary);
 
@@ -39,6 +39,18 @@ public:
 		}
 
 		ifs.close();
+		return true;
+	}
+
+	bool isEncrypted() const
+	{
+		for (int i = 0; i < SIGNATURE_SIZE; i++)
+		{
+			if (Helper::integerToBinary(signature[i], CHAR_BIT)[CHAR_BIT - 1] != SIGNATURE[i])
+			{
+				return false;
+			}
+		}
 		return true;
 	}
 };

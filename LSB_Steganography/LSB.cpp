@@ -1,15 +1,25 @@
 #include <fstream>
 #include "Common.h"
 #include "Bitmap.cpp"
-#include "Helper.cpp"
+#include <iostream>
 
 using namespace std;
 class LSB
 {
 public:
-	static bool LSB::encrypt(Bitmap bitmap, char* inputFileName, char* outputFileName)
+	static bool LSB::encrypt(Bitmap bitmap, string inputFileName, string outputFileName)
 	{
 		ofstream ofs(outputFileName, ios::binary);
+		string message;
+		try
+		{
+			message = readMessage(inputFileName);
+		}
+		catch (exception e)
+		{
+			cout << "Cannot open file: " + inputFileName << endl;
+			return false;
+		}
 
 		if (!ofs.is_open())
 		{
@@ -23,10 +33,23 @@ public:
 
 		for (int i = 0; i < SIGNATURE_SIZE; i++)
 		{
+			if (Helper::isEven(bitmap.signature[i]))
+			{
+				if (SIGNATURE[i] == '1')
+				{
+					bitmap.signature[i]++;
+				}
+			}
+			else
+			{
+				if (SIGNATURE[i] == '0')
+				{
+					bitmap.signature[i]--;
+				}
+			}
 			ofs << char(bitmap.signature[i]);
 		}
-
-		string message = readMessage(inputFileName);
+		
 		string bits = Helper::integerToBinary(message.length(), INT4_BIT);
 		bits += convertToBits(message);
 
@@ -56,23 +79,13 @@ public:
 
 		return true;
 	}
-	static bool decrypt(Bitmap bitmap, char* outputFileName)
+	static bool decrypt(Bitmap bitmap)
 	{
-		ofstream ofs(outputFileName, ios::binary);
+		ofstream ofs("Images/decrypt.txt");
 
 		if (!ofs.is_open())
 		{
 			return false;
-		}
-
-		for (int i = 0; i < HEADER_SIZE; i++)
-		{
-			ofs << char(bitmap.header[i]);
-		}
-
-		for (int i = 0; i < SIGNATURE_SIZE; i++)
-		{
-			ofs << char(bitmap.signature[i]);
 		}
 
 		string bits;
@@ -90,21 +103,22 @@ public:
 			{
 				bits += Helper::integerToBinary(bitmap.data[i++], CHAR_BIT)[CHAR_BIT - 1];
 			}
-			message += Helper::binaryToInteger(bits);
+			//message += char(Helper::binaryToInteger(bits));
+			ofs << char(Helper::binaryToInteger(bits));
 			bits = "";
 		}
-
+		
 		ofs.close();
 		return true;
 	};
 private:
-	static string readMessage(char* fileName)
+	static string readMessage(string fileName)
 	{
 		ifstream ifs(fileName);
 
 		if (!ifs.is_open())
 		{
-			return "";
+			throw exception();
 		}
 
 		string result;
