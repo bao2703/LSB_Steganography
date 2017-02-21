@@ -28,55 +28,33 @@ public:
 
 		for (int i = 0; i < HEADER_SIZE; i++)
 		{
-			ofs << char(bitmap.header[i]);
+			ofs << bitmap.header[i];
 		}
 
 		for (int i = 0; i < SIGNATURE_SIZE; i++)
 		{
-			if (Helper::isEven(bitmap.signature[i]))
-			{
-				if (SIGNATURE[i] == '1')
-				{
-					bitmap.signature[i]++;
-				}
-			}
-			else
-			{
-				if (SIGNATURE[i] == '0')
-				{
-					bitmap.signature[i]--;
-				}
-			}
-			ofs << char(bitmap.signature[i]);
+			hide(bitmap.signature[i], SIGNATURE[i]);
+			ofs << bitmap.signature[i];
+		}
+
+		string messageLenght = Helper::integerToBinary(message.length(), INT4_BIT);
+		for (int i = 0; i < INT4_BIT; ++i)
+		{
+			hide(bitmap.messageLenght[i], messageLenght[i]);
+			ofs << bitmap.messageLenght[i];
 		}
 		
-		string bits = Helper::integerToBinary(message.length(), INT4_BIT);
-		bits += convertToBits(message);
-
+		string bits = convertToBits(message);
 		for (int i = 0; i < bitmap.data.length(); i++)
 		{
 			if (i < bits.length())
 			{
-				if (Helper::isEven(bitmap.data[i]))
-				{
-					if (bits[i] == '1')
-					{
-						bitmap.data[i]++;
-					}
-				}
-				else
-				{
-					if (bits[i] == '0')
-					{
-						bitmap.data[i]--;
-					}
-				}
+				hide(bitmap.data[i], bits[i]);
 			}
 			ofs << bitmap.data[i];
 		}
 
 		ofs.close();
-
 		return true;
 	}
 	static bool decrypt(Bitmap bitmap)
@@ -91,17 +69,17 @@ public:
 		string bits;
 		for (int i = 0; i < INT4_BIT; i++)
 		{
-			bits += Helper::integerToBinary(bitmap.data[i], CHAR_BIT)[CHAR_BIT - 1];
+			bits += Helper::integerToBinary(bitmap.messageLenght[i], CHAR_BIT)[7];
 		}
 		int messageLenght = Helper::binaryToInteger(bits);
 
 		bits = "";
 		string message;
-		for (int i = INT4_BIT; i < messageLenght * CHAR_BIT + INT4_BIT;)
+		for (int i = 0; i < messageLenght * CHAR_BIT;)
 		{
 			for (int j = 0; j < CHAR_BIT; j++)
 			{
-				bits += Helper::integerToBinary(bitmap.data[i++], CHAR_BIT)[CHAR_BIT - 1];
+				bits += Helper::integerToBinary(bitmap.data[i++], CHAR_BIT)[7];
 			}
 			//message += char(Helper::binaryToInteger(bits));
 			ofs << char(Helper::binaryToInteger(bits));
@@ -139,5 +117,24 @@ private:
 			result += Helper::integerToBinary(str[i], CHAR_BIT);
 		}
 		return result;
+	}
+
+	// hide char b to ASCII a
+	static void hide(char &a, char b)
+	{
+		if (Helper::isEven(a))
+		{
+			if (b == '1')
+			{
+				a++;
+			}
+		}
+		else
+		{
+			if (b == '0')
+			{
+				a--;
+			}
+		}
 	}
 };

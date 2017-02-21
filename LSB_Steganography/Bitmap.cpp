@@ -6,11 +6,11 @@ using namespace std;
 class Bitmap
 {
 public:
-	int header[HEADER_SIZE];
-	int signature[SIGNATURE_SIZE];
-	//int messageFileName[FILE_NAME_LENGHT * 8];
-	//int messageExtension[FILE_EXTENSION_LENGHT * 8];
-	//int messageLenght[32];
+	char header[HEADER_SIZE];
+	char signature[SIGNATURE_SIZE];
+	char messageFileName[FILE_NAME_LENGHT * 8];
+	char messageExtension[FILE_EXTENSION_LENGHT * 8];
+	char messageLenght[INT4_BIT];
 	string data;
 	bool readFile(string fileName)
 	{
@@ -31,6 +31,21 @@ public:
 			signature[i] = ifs.get();
 		}
 
+		/*for (int i = 0; i < FILE_NAME_LENGHT * 8; i++)
+		{
+			messageFileName[i] = ifs.get();
+		}
+
+		for (int i = 0; i < FILE_EXTENSION_LENGHT * 8; i++)
+		{
+			messageExtension[i] = ifs.get();
+		}*/
+
+		for (int i = 0; i < INT4_BIT; i++)
+		{
+			messageLenght[i] = ifs.get();
+		}
+
 		data = "";
 		int c;
 		while ((c = ifs.get()) != EOF)
@@ -40,6 +55,11 @@ public:
 
 		ifs.close();
 		return true;
+	}
+
+	bool writeFile(string fileName)
+	{
+		
 	}
 
 	bool isEncrypted() const
