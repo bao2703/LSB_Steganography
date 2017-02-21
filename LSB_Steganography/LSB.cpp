@@ -1,63 +1,35 @@
 #include <fstream>
 #include "Common.h"
 #include "Bitmap.cpp"
-#include <iostream>
+#include "Message.cpp"
 
 using namespace std;
 class LSB
 {
 public:
-	static bool LSB::encrypt(Bitmap bitmap, string inputFileName, string outputFileName)
+	static bool LSB::encrypt(Bitmap *bitmap, string inputFileName)
 	{
-		ofstream ofs(outputFileName, ios::binary);
-		string message;
-		try
-		{
-			message = readMessage(inputFileName);
-		}
-		catch (exception e)
-		{
-			cout << "Cannot open file: " + inputFileName << endl;
+		Message message;
+		if (!message.readFile(inputFileName))
 			return false;
-		}
-
-		if (!ofs.is_open())
-		{
-			return false;
-		}
-
-		for (int i = 0; i < HEADER_SIZE; i++)
-		{
-			ofs << bitmap.header[i];
-		}
 
 		for (int i = 0; i < SIGNATURE_SIZE; i++)
-		{
-			hide(bitmap.signature[i], SIGNATURE[i]);
-			ofs << bitmap.signature[i];
-		}
+			hide(bitmap->signature[i], SIGNATURE[i]);
 
-		string messageLenght = Helper::integerToBinary(message.length(), INT4_BIT);
-		for (int i = 0; i < INT4_BIT; ++i)
-		{
-			hide(bitmap.messageLenght[i], messageLenght[i]);
-			ofs << bitmap.messageLenght[i];
-		}
+		string messageLenght = Helper::integerToBinary(message.data.length(), INT4_BIT);
+		for (int i = 0; i < INT4_BIT; i++)
+			hide(bitmap->messageLenght[i], messageLenght[i]);
 		
-		string bits = convertToBits(message);
-		for (int i = 0; i < bitmap.data.length(); i++)
+		string bits = convertToBits(message.data);
+		for (int i = 0; i < bitmap->data.length(); i++)
 		{
 			if (i < bits.length())
-			{
-				hide(bitmap.data[i], bits[i]);
-			}
-			ofs << bitmap.data[i];
+				hide(bitmap->data[i], bits[i]);
 		}
 
-		ofs.close();
 		return true;
 	}
-	static bool decrypt(Bitmap bitmap)
+	static bool decrypt(const Bitmap *bitmap)
 	{
 		ofstream ofs("Images/decrypt.txt");
 
@@ -69,7 +41,7 @@ public:
 		string bits;
 		for (int i = 0; i < INT4_BIT; i++)
 		{
-			bits += Helper::integerToBinary(bitmap.messageLenght[i], CHAR_BIT)[7];
+			bits += Helper::integerToBinary(bitmap->messageLenght[i], CHAR_BIT)[CHAR_BIT - 1];
 		}
 		int messageLenght = Helper::binaryToInteger(bits);
 
@@ -79,7 +51,7 @@ public:
 		{
 			for (int j = 0; j < CHAR_BIT; j++)
 			{
-				bits += Helper::integerToBinary(bitmap.data[i++], CHAR_BIT)[7];
+				bits += Helper::integerToBinary(bitmap->data[i++], CHAR_BIT)[CHAR_BIT - 1];
 			}
 			//message += char(Helper::binaryToInteger(bits));
 			ofs << char(Helper::binaryToInteger(bits));
@@ -90,32 +62,11 @@ public:
 		return true;
 	};
 private:
-	static string readMessage(string fileName)
-	{
-		ifstream ifs(fileName);
-
-		if (!ifs.is_open())
-		{
-			throw exception();
-		}
-
-		string result;
-		int c;
-		while ((c = ifs.get()) != EOF)
-		{			
-			result += c;
-		}
-
-		ifs.close();
-		return result;
-	}
 	static string convertToBits(string str)
 	{
 		string result;
 		for (int i = 0; i < str.length(); i++)
-		{
 			result += Helper::integerToBinary(str[i], CHAR_BIT);
-		}
 		return result;
 	}
 
@@ -125,16 +76,12 @@ private:
 		if (Helper::isEven(a))
 		{
 			if (b == '1')
-			{
 				a++;
-			}
 		}
 		else
 		{
 			if (b == '0')
-			{
 				a--;
-			}
 		}
 	}
 };

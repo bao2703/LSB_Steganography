@@ -17,19 +17,13 @@ public:
 		ifstream ifs(fileName, ios::binary);
 
 		if (!ifs.is_open())
-		{
 			return false;
-		}
 
 		for (int i = 0; i < HEADER_SIZE; i++)
-		{
 			header[i] = ifs.get();
-		}
 
 		for (int i = 0; i < SIGNATURE_SIZE; i++)
-		{
 			signature[i] = ifs.get();
-		}
 
 		/*for (int i = 0; i < FILE_NAME_LENGHT * 8; i++)
 		{
@@ -42,9 +36,7 @@ public:
 		}*/
 
 		for (int i = 0; i < INT4_BIT; i++)
-		{
 			messageLenght[i] = ifs.get();
-		}
 
 		data = "";
 		int c;
@@ -59,7 +51,25 @@ public:
 
 	bool writeFile(string fileName)
 	{
-		
+		ofstream ofs(fileName, ios::binary);
+
+		if (!ofs.is_open())
+			return false;
+
+		for (int i = 0; i < HEADER_SIZE; i++)
+			ofs << header[i];
+
+		for (int i = 0; i < SIGNATURE_SIZE; i++)
+			ofs << signature[i];
+
+		for (int i = 0; i < INT4_BIT; ++i)
+			ofs << messageLenght[i];
+
+		for (int i = 0; i < data.length(); i++)
+			ofs << data[i];
+
+		ofs.close();
+		return true;
 	}
 
 	bool isEncrypted() const
@@ -67,9 +77,7 @@ public:
 		for (int i = 0; i < SIGNATURE_SIZE; i++)
 		{
 			if (Helper::integerToBinary(signature[i], CHAR_BIT)[CHAR_BIT - 1] != SIGNATURE[i])
-			{
 				return false;
-			}
 		}
 		return true;
 	}

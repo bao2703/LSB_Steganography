@@ -6,7 +6,7 @@ using namespace std;
 
 void main()
 {
-	Bitmap bitmap;	
+	Bitmap *bitmap = new Bitmap();	
 
 	cout << "1. Encrypt" << endl;
 	cout << "2. Decrypt" << endl;
@@ -35,14 +35,15 @@ void main()
 
 	if (choose == 1)
 	{
-		bitmap.readFile("Images/bitmap.bmp");
+		bitmap->readFile("Images/bitmap.bmp");
 		//LSB::encrypt(bitmap, messageFileName, outputFileName);
-		LSB::encrypt(bitmap, "Images/text.txt", "Images/encrypted.bmp");
+		LSB::encrypt(bitmap, "Images/12345678.txt");
+		bitmap->writeFile("Images/encrypted.bmp");
 	}
 	else if (choose == 2)
 	{
-		bitmap.readFile("Images/encrypted.bmp");
-		if (!bitmap.isEncrypted())
+		bitmap->readFile("Images/encrypted.bmp");
+		if (!bitmap->isEncrypted())
 		{
 			cout << "Bitmap file is not encrypted, please check message input location!";
 			system("PAUSE");
@@ -51,5 +52,6 @@ void main()
 		LSB::decrypt(bitmap);
 	}
 
+	delete bitmap;
 	system("PAUSE");
 }
