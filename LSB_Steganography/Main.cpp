@@ -37,7 +37,7 @@ void main()
 	{
 		bitmap->readFile("Images/bitmap.bmp");
 		//LSB::encrypt(bitmap, messageFileName, outputFileName);
-		if(LSB::encrypt(bitmap, "Images/12345678.txt"))
+		if(LSB::encrypt(bitmap, "Images/62345678.txt"))
 			bitmap->writeFile("Images/encrypted.bmp");
 	}
 	else if (choose == 2)
@@ -45,7 +45,7 @@ void main()
 		bitmap->readFile("Images/encrypted.bmp");
 		if (!bitmap->isEncrypted())
 		{
-			cout << "Bitmap file is not encrypted, please check message input location!";
+			cout << "Bitmap file is not encrypted!" << endl;
 			system("PAUSE");
 			return;
 		}

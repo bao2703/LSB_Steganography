@@ -5,8 +5,8 @@ using namespace std;
 class Message
 {
 public:
-	char fileName[FILE_NAME_LENGHT];
-	char fileExtension[FILE_EXTENSION_LENGHT];
+	char fileName[FILE_NAME_LENGHT + 1];
+	char fileExtension[FILE_EXTENSION_LENGHT + 1];
 	string data;
 
 	bool readFile(string fileName)

@@ -59,6 +59,7 @@ public:
 				bits = "";
 			}
 		}
+		message.fileName[index] = '\0';
 
 		index = 0;
 		bits = "";
@@ -72,11 +73,13 @@ public:
 				bits = "";
 			}
 		}
+		message.fileExtension[index] = '\0';
 
-		string fullFileName = message.fileName;
+		string fullFileName(message.fileName);
 		fullFileName += ".";
 		fullFileName += message.fileExtension;
 		ofstream ofs(fullFileName);
+		
 		if (!ofs.is_open())
 			return false;
 
@@ -87,9 +90,9 @@ public:
 			if (++j == 8)
 			{
 				message.data += char(Helper::binaryToInteger(bits));
+				ofs << char(Helper::binaryToInteger(bits));
 				j = 0;
 				bits = "";
-				ofs << char(Helper::binaryToInteger(bits));
 			}
 		}
 		
