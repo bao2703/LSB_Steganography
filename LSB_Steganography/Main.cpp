@@ -1,6 +1,5 @@
 #include <iostream>
-#include <fstream>
-#include "LSB.cpp"
+#include "LSB.h"
 
 using namespace std;
 
@@ -45,7 +44,7 @@ void main()
 		bitmap->readFile("Images/encrypted.bmp");
 		if (!bitmap->isEncrypted())
 		{
-			cout << "Bitmap file is not encrypted!" << endl;
+			cout << "Bitmap file is not encrypted." << endl;
 			system("PAUSE");
 			return;
 		}

@@ -1,42 +1,40 @@
-#include <string>
+#include "Helper.h"
 #include "Common.h"
 
-using namespace std;
-
-class Helper
+Helper::Helper()
 {
-public:
-	static string integerToBinary(int n, int maxBit)
+}
+
+
+Helper::~Helper()
+{
+}
+
+string Helper::integerToBinary(int n, int maxBit)
+{
+	string result;
+	for (int i = maxBit - 1; i >= 0; i--)
 	{
-		string result;
-		for (int i = maxBit - 1; i >= 0; i--)
+		result += to_string(n >> i & 1);
+	}
+	return result;
+}
+
+int Helper::binaryToInteger(string str)
+{
+	int n = 0;
+	for (int i = 0; i < INT4_BIT && str[i]; i++)
+	{
+		n *= 2;
+		if (str[i] == '1')
 		{
-			result += to_string(n >> i & 1);
+			n++;
 		}
-		return result;
 	}
+	return n;
+}
 
-	static int binaryToInteger(string str)
-	{
-		int n = 0;
-		for (int i = 0; i < INT4_BIT && str[i]; i++)
-		{
-			n *= 2;
-			if (str[i] == '1')
-			{
-				n++;
-			}
-		}
-		return n;
-	}
-
-	static bool isEven(int n)
-	{
-		return n % 2 == 0;
-	}
-
-	static bool isOdd(int n)
-	{
-		return !isEven(n);
-	}
-};
+bool Helper::isEven(int n)
+{
+	return n % 2 == 0;
+}

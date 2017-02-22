@@ -117,7 +117,11 @@
     <ClCompile Include="Message.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bitmap.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="Helper.h" />
+    <ClInclude Include="LSB.h" />
+    <ClInclude Include="Message.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
