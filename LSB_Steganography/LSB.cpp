@@ -14,48 +14,83 @@ public:
 			return false;
 
 		for (int i = 0; i < SIGNATURE_SIZE; i++)
-			hide(bitmap->signature[i], SIGNATURE[i]);
+			encode(bitmap->signature[i], SIGNATURE[i]);
+
+		string fileNameBits = convertToBits(message.fileName);
+		for (int i = 0; i < FILE_NAME_LENGHT * CHAR_BIT; i++)
+			encode(bitmap->messageFileName[i], fileNameBits[i]);
+
+		string fileExtensionBits = convertToBits(message.fileExtension);
+		for (int i = 0; i < FILE_EXTENSION_LENGHT * CHAR_BIT; i++)
+			encode(bitmap->messageExtension[i], fileExtensionBits[i]);
 
 		string messageLenght = Helper::integerToBinary(message.data.length(), INT4_BIT);
 		for (int i = 0; i < INT4_BIT; i++)
-			hide(bitmap->messageLenght[i], messageLenght[i]);
+			encode(bitmap->messageLenght[i], messageLenght[i]);
 		
 		string bits = convertToBits(message.data);
 		for (int i = 0; i < bitmap->data.length(); i++)
 		{
 			if (i < bits.length())
-				hide(bitmap->data[i], bits[i]);
+				encode(bitmap->data[i], bits[i]);
 		}
 
 		return true;
 	}
 	static bool decrypt(const Bitmap *bitmap)
 	{
-		ofstream ofs("Images/decrypt.txt");
-
-		if (!ofs.is_open())
-		{
-			return false;
-		}
-
 		string bits;
+		Message message;
+		int j = 0;
+		
 		for (int i = 0; i < INT4_BIT; i++)
-		{
-			bits += Helper::integerToBinary(bitmap->messageLenght[i], CHAR_BIT)[CHAR_BIT - 1];
-		}
+			bits += decode(bitmap->messageLenght[i]);
 		int messageLenght = Helper::binaryToInteger(bits);
 
+		int index = 0;
 		bits = "";
-		string message;
-		for (int i = 0; i < messageLenght * CHAR_BIT;)
+		for (int i = 0; i < FILE_NAME_LENGHT * CHAR_BIT; i++)
 		{
-			for (int j = 0; j < CHAR_BIT; j++)
+			bits += decode(bitmap->messageFileName[i]);
+			if (++j == 8)
 			{
-				bits += Helper::integerToBinary(bitmap->data[i++], CHAR_BIT)[CHAR_BIT - 1];
+				message.fileName[index++] = char(Helper::binaryToInteger(bits));
+				j = 0;
+				bits = "";
 			}
-			//message += char(Helper::binaryToInteger(bits));
-			ofs << char(Helper::binaryToInteger(bits));
-			bits = "";
+		}
+
+		index = 0;
+		bits = "";
+		for (int i = 0; i < FILE_EXTENSION_LENGHT * CHAR_BIT; i++)
+		{
+			bits += decode(bitmap->messageExtension[i]);
+			if (++j == 8)
+			{
+				message.fileExtension[index++] = char(Helper::binaryToInteger(bits));
+				j = 0;
+				bits = "";
+			}
+		}
+
+		string fullFileName = message.fileName;
+		fullFileName += ".";
+		fullFileName += message.fileExtension;
+		ofstream ofs(fullFileName);
+		if (!ofs.is_open())
+			return false;
+
+		bits = "";
+		for (int i = 0; i < messageLenght * CHAR_BIT; i++)
+		{	
+			bits += decode(bitmap->data[i]);	
+			if (++j == 8)
+			{
+				message.data += char(Helper::binaryToInteger(bits));
+				j = 0;
+				bits = "";
+				ofs << char(Helper::binaryToInteger(bits));
+			}
 		}
 		
 		ofs.close();
@@ -71,7 +106,7 @@ private:
 	}
 
 	// hide char b to ASCII a
-	static void hide(char &a, char b)
+	static void encode(char &a, char b)
 	{
 		if (Helper::isEven(a))
 		{
@@ -83,5 +118,10 @@ private:
 			if (b == '0')
 				a--;
 		}
+	}
+
+	static char decode(char a)
+	{
+		return Helper::isEven(a) ? '0' : '1';
 	}
 };

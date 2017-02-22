@@ -11,7 +11,8 @@ public:
 
 	bool readFile(string fileName)
 	{
-		if (fileName.length() != FILE_NAME_LENGHT + FILE_EXTENSION_LENGHT + 1)
+		string shortFileName(strrchr(fileName.c_str(), '/') + 1);
+		if (shortFileName.length() != FILE_NAME_LENGHT + FILE_EXTENSION_LENGHT + 1)
 			return false;
 
 		ifstream ifs(fileName);
@@ -20,10 +21,10 @@ public:
 			return false;
 
 		for (int i = 0; i < FILE_NAME_LENGHT; i++)
-			this->fileName[i] = fileName[i];
+			this->fileName[i] = shortFileName[i];
 
 		for (int i = 0; i < FILE_EXTENSION_LENGHT; i++)
-			fileExtension[i] = fileName[FILE_NAME_LENGHT + i];
+			fileExtension[i] = shortFileName[FILE_NAME_LENGHT + i + 1];
 
 		data = "";
 		int c;

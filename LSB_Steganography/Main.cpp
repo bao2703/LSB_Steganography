@@ -37,8 +37,8 @@ void main()
 	{
 		bitmap->readFile("Images/bitmap.bmp");
 		//LSB::encrypt(bitmap, messageFileName, outputFileName);
-		LSB::encrypt(bitmap, "Images/12345678.txt");
-		bitmap->writeFile("Images/encrypted.bmp");
+		if(LSB::encrypt(bitmap, "Images/12345678.txt"))
+			bitmap->writeFile("Images/encrypted.bmp");
 	}
 	else if (choose == 2)
 	{

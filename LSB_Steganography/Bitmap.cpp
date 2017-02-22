@@ -8,8 +8,8 @@ class Bitmap
 public:
 	char header[HEADER_SIZE];
 	char signature[SIGNATURE_SIZE];
-	char messageFileName[FILE_NAME_LENGHT * 8];
-	char messageExtension[FILE_EXTENSION_LENGHT * 8];
+	char messageFileName[FILE_NAME_LENGHT * CHAR_BIT];
+	char messageExtension[FILE_EXTENSION_LENGHT * CHAR_BIT];
 	char messageLenght[INT4_BIT];
 	string data;
 	bool readFile(string fileName)
@@ -25,15 +25,11 @@ public:
 		for (int i = 0; i < SIGNATURE_SIZE; i++)
 			signature[i] = ifs.get();
 
-		/*for (int i = 0; i < FILE_NAME_LENGHT * 8; i++)
-		{
+		for (int i = 0; i < FILE_NAME_LENGHT * CHAR_BIT; i++)
 			messageFileName[i] = ifs.get();
-		}
 
-		for (int i = 0; i < FILE_EXTENSION_LENGHT * 8; i++)
-		{
+		for (int i = 0; i < FILE_EXTENSION_LENGHT * CHAR_BIT; i++)
 			messageExtension[i] = ifs.get();
-		}*/
 
 		for (int i = 0; i < INT4_BIT; i++)
 			messageLenght[i] = ifs.get();
@@ -61,6 +57,12 @@ public:
 
 		for (int i = 0; i < SIGNATURE_SIZE; i++)
 			ofs << signature[i];
+
+		for (int i = 0; i < FILE_NAME_LENGHT * CHAR_BIT; i++)
+			ofs << messageFileName[i];
+
+		for (int i = 0; i < FILE_EXTENSION_LENGHT * CHAR_BIT; i++)
+			ofs << messageExtension[i];
 
 		for (int i = 0; i < INT4_BIT; ++i)
 			ofs << messageLenght[i];
