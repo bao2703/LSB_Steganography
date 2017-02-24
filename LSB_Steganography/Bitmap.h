@@ -18,5 +18,6 @@ public:
 	~Bitmap();
 	bool readFile(string fileName);
 	bool writeFile(string fileName);
-	bool isEncrypted() const;
+	bool isEncrypted();
+	int getCapacity();
 };

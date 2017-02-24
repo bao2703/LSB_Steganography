@@ -36,8 +36,9 @@ void main()
 	{
 		bitmap->readFile("Images/bitmap.bmp");
 		//LSB::encrypt(bitmap, messageFileName, outputFileName);
-		if(LSB::encrypt(bitmap, "Images/62345678.txt"))
+		if(LSB::encrypt(bitmap, "Images/12345678.txt"))
 			bitmap->writeFile("Images/encrypted.bmp");
+		cout << bitmap->getCapacity();
 	}
 	else if (choose == 2)
 	{
@@ -50,6 +51,7 @@ void main()
 		}
 		LSB::decrypt(bitmap);
 	}
+
 
 	delete bitmap;
 	system("PAUSE");

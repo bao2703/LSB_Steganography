@@ -51,7 +51,7 @@ bool LSB::decrypt(const Bitmap* bitmap)
 
 	for (int i = 0; i < INT4_BIT; i++)
 		bits += decode(bitmap->messageLenght[i]);
-	int messageLenght = Helper::binaryToInteger(bits);
+	unsigned int messageLenght = Helper::binaryToInteger(bits);
 
 	int index = 0;
 	bits = "";

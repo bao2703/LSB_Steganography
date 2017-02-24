@@ -9,7 +9,6 @@ public:
 	Helper();
 	~Helper();
 	static string integerToBinary(int n, int maxBit);
-	static int binaryToInteger(string str);
+	static unsigned int binaryToInteger(string str);
 	static bool isEven(int n);
 };
-

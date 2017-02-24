@@ -15,13 +15,11 @@ private:
 	* \return
 	*/
 	static string convertToBits(string str);
-
 	/**
-	* \brief Hide bit to ch
+	* \brief Hide 1 bit to char ch
 	* \param ch
 	* \param bit
 	*/
-	static void encode(char& ch, char bit);
-
+	static void encode(char &ch, char bit);
 	static char decode(char a);
 };

@@ -20,9 +20,9 @@ string Helper::integerToBinary(int n, int maxBit)
 	return result;
 }
 
-int Helper::binaryToInteger(string str)
+unsigned int Helper::binaryToInteger(string str)
 {
-	int n = 0;
+	unsigned int n = 0;
 	for (int i = 0; i < INT4_BIT && str[i]; i++)
 	{
 		n *= 2;

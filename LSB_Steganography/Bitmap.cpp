@@ -72,7 +72,7 @@ bool Bitmap::writeFile(string fileName)
 	return true;
 }
 
-bool Bitmap::isEncrypted() const
+bool Bitmap::isEncrypted()
 {
 	for (int i = 0; i < SIGNATURE_SIZE; i++)
 	{
@@ -80,4 +80,9 @@ bool Bitmap::isEncrypted() const
 			return false;
 	}
 	return true;
+}
+
+int Bitmap::getCapacity()
+{
+	return data.length() / CHAR_BIT;
 }

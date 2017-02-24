@@ -15,4 +15,3 @@ public:
 	~Message();
 	bool readFile(string fileName);
 };
-
