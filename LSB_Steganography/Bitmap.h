@@ -6,7 +6,7 @@ using namespace std;
 
 class Bitmap
 {
-public:	
+public:
 	char header[HEADER_SIZE];
 	char signature[SIGNATURE_SIZE];
 	char messageFileName[FILE_NAME_LENGHT * CHAR_BIT];

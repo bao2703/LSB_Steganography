@@ -1,12 +1,13 @@
 #pragma once
 #include "Bitmap.h"
+#include "Message.h"
 
 class LSB
 {
 public:
 	LSB();
 	~LSB();
-	static bool encrypt(Bitmap* bitmap, string inputFileName);
+	static bool encrypt(Bitmap* bitmap, const Message* message);
 	static bool decrypt(const Bitmap* bitmap);
 private:
 	/**
@@ -20,6 +21,6 @@ private:
 	* \param ch
 	* \param bit
 	*/
-	static void encode(char &ch, char bit);
+	static void encode(char& ch, char bit);
 	static char decode(char a);
 };

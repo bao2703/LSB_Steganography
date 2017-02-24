@@ -3,55 +3,80 @@
 
 using namespace std;
 
+Bitmap* bitmap = new Bitmap();
+
+void encrypt()
+{
+	cout << "Nhap ten file thong tin can giau: " << endl;
+	string messageFileName;
+	cin >> messageFileName;
+
+	Message* message = new Message();
+
+	if (!message->readFile(messageFileName))
+	{
+		cout << "Khong the doc file thong tin can giau: " + messageFileName << endl;
+		return;
+	}
+	if (!LSB::encrypt(bitmap, message))
+	{
+		cout << "Suc chua file bitmap khong du." << endl;
+		return;
+	}
+
+	cout << "Nhap ten file bitmap output: " << endl;
+	string outputFileName;
+	cin >> outputFileName;
+
+	if (!bitmap->writeFile(outputFileName))
+	{
+		cout << "Khong the ghi file bitmap: " + outputFileName << endl;
+		return;
+	}
+}
+
+void decrypt()
+{
+	if (!bitmap->isEncrypted())
+	{
+		cout << "File bitmap chua duoc giau thong tin." << endl;
+		return;
+	}
+	if (!LSB::decrypt(bitmap))
+	{
+		cout << "Giai nen that bai." << endl;
+		return;
+	}
+}
+
 void main()
 {
-	Bitmap *bitmap = new Bitmap();	
-
 	cout << "1. Encrypt" << endl;
 	cout << "2. Decrypt" << endl;
 
 	int choose;
 	cin >> choose;
 
-	//cout << "Input bitmap location: " << endl;
-	//string bitmapFileName;
-	//cin >> bitmapFileName;
+	cout << "Nhap ten file bitmap: " << endl;
+	string bitmapFileName;
+	cin >> bitmapFileName;
 
-	//cout << "Input message file location: " << endl;
-	//string messageFileName;
-	//cin >> messageFileName;
-
-	//cout << "Input output file location: " << endl;
-	//string outputFileName;
-	//cin >> outputFileName;
-
-	/*if (!bitmap.readFile(bitmapFileName))
+	if (!bitmap->readFile(bitmapFileName))
 	{
-		cout << "Cannot open file: " + bitmapFileName;
+		cout << "Khong the doc file bitmap: " + bitmapFileName << endl;
+		delete bitmap;
 		system("PAUSE");
 		return;
-	}*/
+	}
 
 	if (choose == 1)
 	{
-		bitmap->readFile("Images/bitmap.bmp");
-		//LSB::encrypt(bitmap, messageFileName, outputFileName);
-		if(LSB::encrypt(bitmap, "Images/12345678.txt"))
-			bitmap->writeFile("Images/encrypted.bmp");
-		cout << bitmap->getCapacity();
+		encrypt();
 	}
 	else if (choose == 2)
 	{
-		bitmap->readFile("Images/encrypted.bmp");
-		if (!bitmap->isEncrypted())
-		{
-			cout << "Bitmap file is not encrypted." << endl;
-			system("PAUSE");
-			return;
-		}
-		LSB::decrypt(bitmap);
+		decrypt();
 	}
-
 
 	delete bitmap;
 	system("PAUSE");

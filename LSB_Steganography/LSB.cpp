@@ -1,7 +1,6 @@
 #include "LSB.h"
 #include <fstream>
 #include "Common.h"
-#include "Message.h"
 
 LSB::LSB()
 {
@@ -12,28 +11,27 @@ LSB::~LSB()
 {
 }
 
-bool LSB::encrypt(Bitmap* bitmap, string inputFileName)
+bool LSB::encrypt(Bitmap* bitmap, const Message* message)
 {
-	Message message;
-	if (!message.readFile(inputFileName))
+	if (message->data.length() > bitmap->getCapacity())
 		return false;
 
 	for (int i = 0; i < SIGNATURE_SIZE; i++)
 		encode(bitmap->signature[i], SIGNATURE[i]);
 
-	string fileNameBits = convertToBits(message.fileName);
+	string fileNameBits = convertToBits(message->fileName);
 	for (int i = 0; i < FILE_NAME_LENGHT * CHAR_BIT; i++)
 		encode(bitmap->messageFileName[i], fileNameBits[i]);
 
-	string fileExtensionBits = convertToBits(message.fileExtension);
+	string fileExtensionBits = convertToBits(message->fileExtension);
 	for (int i = 0; i < FILE_EXTENSION_LENGHT * CHAR_BIT; i++)
 		encode(bitmap->messageExtension[i], fileExtensionBits[i]);
 
-	string messageLenght = Helper::integerToBinary(message.data.length(), INT4_BIT);
+	string messageLenght = Helper::integerToBinary(message->data.length(), INT4_BIT);
 	for (int i = 0; i < INT4_BIT; i++)
 		encode(bitmap->messageLenght[i], messageLenght[i]);
 
-	string bits = convertToBits(message.data);
+	string bits = convertToBits(message->data);
 	for (int i = 0; i < bitmap->data.length(); i++)
 	{
 		if (i < bits.length())
